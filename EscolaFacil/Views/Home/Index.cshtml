@@ -1,0 +1,166 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Suporte Técnico Escolar</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        .step {
+            display: none;
+        }
+
+            .step.active {
+                display: block;
+            }
+    </style>
+</head>
+<body class="p-4 bg-light">
+    <div class="container">
+        <h2 class="mb-4">Abrir Chamado - Suporte Técnico</h2>
+
+        <!-- Etapa 1: Escolha do equipamento -->
+        <div id="step1" class="step active">
+            <h5>O que está com problema?</h5>
+            <div class="btn-group mt-2 flex-wrap" role="group">
+                <button class="btn btn-outline-primary m-1" onclick="selecionarEquipamento('impressora')">Impressora</button>
+                <button class="btn btn-outline-primary m-1" onclick="selecionarEquipamento('computador')">Computador</button>
+                <button class="btn btn-outline-primary m-1" onclick="selecionarEquipamento('internet')">Internet</button>
+                <button class="btn btn-outline-primary m-1" onclick="selecionarEquipamento('projetor')">Projetor</button>
+                <button class="btn btn-outline-primary m-1" onclick="selecionarEquipamento('quadro')">Quadro Digital</button>
+                <button class="btn btn-outline-primary m-1" onclick="selecionarEquipamento('som')">Caixa de Som</button>
+                <button class="btn btn-outline-primary m-1" onclick="selecionarEquipamento('notebook')">Notebook</button>
+                <button class="btn btn-outline-primary m-1" onclick="selecionarEquipamento('outros')">Outros</button>
+            </div>
+        </div>
+
+        <!-- Etapa 2: Detalhamento -->
+        <div id="step2" class="step">
+            <h5 id="tituloDetalhe" class="mt-4"></h5>
+            <div id="opcoesDetalhes" class="mt-2"></div>
+            <button class="btn btn-secondary mt-4" onclick="voltar()">Voltar</button>
+        </div>
+
+        <!-- Resultado -->
+        <div id="resultado" class="alert alert-info mt-4 step"></div>
+    </div>
+
+    <script>
+        const problemas = {
+            impressora: {
+                titulo: 'Qual o problema com a impressora?',
+                opcoes: {
+                    'Sem tinta': 'Verifique os cartuchos e solicite reposição se necessário.',
+                    'Não imprime': 'Confirme se está conectada corretamente ao computador.',
+                    'Papel atolado': 'Abra o compartimento e retire com cuidado o papel.',
+                    'Impressão borrada': 'Pode ser sujeira nos rolos ou cartucho com defeito.',
+                    'Não sei': 'Sem problema. Vamos abrir um chamado para verificação.'
+                }
+            },
+            computador: {
+                titulo: 'Qual o problema com o computador?',
+                opcoes: {
+                    'Não liga': 'Verifique se está conectado à tomada e o estabilizador está ligado.',
+                    'Travando': 'Tente reiniciar. Se persistir, solicite suporte.',
+                    'Tela azul': 'Erro crítico. É necessário suporte técnico.',
+                    'Sem áudio': 'Verifique se os drivers de som estão funcionando.',
+                    'Não sei': 'Vamos registrar o chamado para análise.'
+                }
+            },
+            internet: {
+                titulo: 'Qual o problema com a internet?',
+                opcoes: {
+                    'Sem conexão': 'Verifique se está conectado ao Wi-Fi ou cabo.',
+                    'Lenta': 'A lentidão pode ser temporária. Se continuar, chame o suporte.',
+                    'Oscilando': 'Pode haver interferência ou problema no roteador.',
+                    'Só em alguns computadores': 'Pode ser problema local de rede.',
+                    'Não sei': 'Tudo bem. Vamos investigar.'
+                }
+            },
+            projetor: {
+                titulo: 'Qual o problema com o projetor?',
+                opcoes: {
+                    'Não liga': 'Verifique o cabo de energia e a lâmpada.',
+                    'Sem imagem': 'Confirme a conexão com o computador.',
+                    'Imagem tremida': 'Pode ser problema de foco ou sinal.',
+                    'Imagem apagada': 'Pode estar no modo economia de energia.',
+                    'Não sei': 'Vamos registrar o chamado.'
+                }
+            },
+            quadro: {
+                titulo: 'Qual o problema com o quadro digital?',
+                opcoes: {
+                    'Não responde ao toque': 'Verifique se está ligado corretamente.',
+                    'Tela preta': 'Pode estar sem sinal. Verifique a conexão HDMI/VGA.',
+                    'Caneta não funciona': 'Verifique se está carregada ou conectada.',
+                    'Erro de calibração': 'Reinicie e refaça a calibração.',
+                    'Não sei': 'Vamos investigar.'
+                }
+            },
+            som: {
+                titulo: 'Qual o problema com a caixa de som?',
+                opcoes: {
+                    'Sem som': 'Verifique o cabo P2 e o volume do computador.',
+                    'Chiado': 'Pode ser interferência ou cabo com mau contato.',
+                    'Volume baixo': 'Verifique se o volume do sistema está baixo.',
+                    'Só uma caixa funciona': 'Pode ser problema no cabo ou saída de áudio.',
+                    'Não sei': 'Vamos abrir um chamado.'
+                }
+            },
+            notebook: {
+                titulo: 'Qual o problema com o notebook?',
+                opcoes: {
+                    'Bateria não carrega': 'Teste outro carregador se possível.',
+                    'Superaquecendo': 'Use em local ventilado e limpe as saídas de ar.',
+                    'Teclado falhando': 'Pode ser sujeira ou problema físico.',
+                    'Tela piscando': 'Pode ser problema de driver ou tela solta.',
+                    'Não sei': 'Vamos registrar o chamado.'
+                }
+            },
+            outros: {
+                titulo: 'Qual o problema?',
+                opcoes: {
+                    'Não sei o nome do equipamento': 'Sem problemas, vamos registrar e identificar o equipamento.',
+                    'Problema elétrico': 'Encaminharemos para manutenção predial.',
+                    'Erro genérico': 'Descreva melhor na observação do chamado.',
+                    'Equipamento danificado': 'Registrar e solicitar troca/reparo.',
+                    'Outro': 'O suporte fará a análise.'
+                }
+            }
+        };
+
+        let equipamentoSelecionado = "";
+
+        function selecionarEquipamento(equipamento) {
+            equipamentoSelecionado = equipamento;
+            document.getElementById("step1").classList.remove("active");
+            document.getElementById("step2").classList.add("active");
+
+            const dados = problemas[equipamento];
+            document.getElementById("tituloDetalhe").textContent = dados.titulo;
+
+            const container = document.getElementById("opcoesDetalhes");
+            container.innerHTML = '';
+
+            for (const [texto, resposta] of Object.entries(dados.opcoes)) {
+                const btn = document.createElement('button');
+                btn.className = 'btn btn-outline-success me-2 mt-2';
+                btn.textContent = texto;
+                btn.onclick = () => mostrarResultado(resposta);
+                container.appendChild(btn);
+            }
+        }
+
+        function mostrarResultado(texto) {
+            document.getElementById("step2").classList.remove("active");
+            const res = document.getElementById("resultado");
+            res.textContent = texto;
+            res.classList.add("active");
+        }
+
+        function voltar() {
+            document.getElementById("step2").classList.remove("active");
+            document.getElementById("step1").classList.add("active");
+        }
+    </script>
+</body>
+</html>
